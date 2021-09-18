@@ -1,2 +1,2 @@
 # Extrene Starry Updater
-`Extrene Starry Updater` ÊÇ `Extrene Starry` µÄ×Ô¶¯Éı¼¶×é¼ş
+`Extrene Starry Updater` æ˜¯ `Extrene Starry` çš„è‡ªåŠ¨å‡çº§ç»„ä»¶
