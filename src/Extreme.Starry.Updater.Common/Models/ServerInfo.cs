@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 using Extreme.Starry.Updater.Common.Models.Primitives;
+using System.ComponentModel;
 
 #if !NET45
 using System.Text.Json.Serialization;
@@ -20,28 +21,29 @@ namespace Extreme.Starry.Updater.Common.Models
     [XmlRoot(ElementName = "server")]
     public sealed class ServerInfo : BaseOnConfig
     {
-        [JsonPropertyName("serverName")]
-        [XmlAttribute(AttributeName = "name")]
+        [JsonPropertyName("serverName"), XmlAttribute(AttributeName = "name")]
         public string ServerName { get; set; }
 
-        [JsonIgnore]
-        [XmlAttribute(AttributeName = "url")]
+        [JsonIgnore, XmlIgnore]
         public Uri ServerUrl { get; set; }
 
-        [JsonPropertyName("serverVersion")]
-        [XmlIgnore]
+        [XmlAttribute(AttributeName = "url"), Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+        public string ServerUrlString
+        {
+            get => ServerUrl?.ToString();
+            set => ServerUrl = value == null ? null : new Uri(value);
+        }
+
+        [JsonPropertyName("serverVersion"), XmlIgnore]
         public string ServerVersion { get; set; }
 
-        [JsonPropertyName("current")]
-        [XmlIgnore]
+        [JsonPropertyName("current"), XmlIgnore]
         public string CurrentVersion { get; set; }
 
-        [JsonPropertyName("gameId")]
-        [XmlIgnore]
+        [JsonPropertyName("gameId"), XmlIgnore]
         public string GameID { get; set; }
 
-        [JsonPropertyName("versions")]
-        [XmlIgnore]
+        [JsonPropertyName("versions"), XmlIgnore]
         public List<VersionInfo> Versions { get; set; }
     }
 }

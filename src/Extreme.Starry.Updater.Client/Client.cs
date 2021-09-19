@@ -20,7 +20,6 @@ namespace Extreme.Starry.Updater.Client
     public delegate void DownloadProgressCallback(long process, long? length);
     public sealed class Client : HttpClient
     {
-        ~Client() => Dispose(disposing: false);
 
         /// <summary>
         /// 下载
@@ -112,6 +111,5 @@ namespace Extreme.Starry.Updater.Client
                 return response.Content.Headers;
             }
         }
-
     }
 }

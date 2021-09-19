@@ -6,7 +6,6 @@ using Extreme.Starry.Updater.Common.Models.Primitives;
 using System.Text.Json.Serialization;
 #else
 using JsonPropertyName = Newtonsoft.Json.JsonPropertyAttribute;
-using JsonIgnore = Newtonsoft.Json.JsonIgnoreAttribute;
 #endif
 
 
