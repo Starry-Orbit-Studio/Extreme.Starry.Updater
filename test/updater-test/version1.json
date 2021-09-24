@@ -1,0 +1,25 @@
+{
+  "gameId": "ES",
+  "Version": "0.0.1 test",
+  "files": [
+    {
+      "hash": "00000",
+      "path": "/test",
+      "size": 0,
+      "url": "http://localhost:3000/version1"
+    },
+    {
+      "hash": "00000",
+      "path": "/test1",
+      "size": 0,
+      "url": "http://localhost:3000/version1",
+      "moveFrom": "/test2"
+    },
+    {
+      "hash": "00000",
+      "path": "/test3",
+      "size": 0,
+      "remove": true
+    }
+  ]
+}
