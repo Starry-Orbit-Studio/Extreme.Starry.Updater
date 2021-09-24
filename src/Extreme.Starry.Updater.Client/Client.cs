@@ -42,56 +42,85 @@ namespace Extreme.Starry.Updater.Client
             CancellationTokenSource cancellation = default
             )
         {
-            using (HttpRequestMessage requese = new HttpRequestMessage
+            bool dispose = false;
+            try
             {
-                RequestUri = uri,
-                Method = HttpMethod.Get
-            })
-            {
-                if (from.HasValue || to.HasValue)
-                    requese.Headers.Range = new RangeHeaderValue(from, to);
-
-                var response = await SendAsync(requese, cancellation.Token).ConfigureAwait(false);
-                int bytesRead;
-                long? length = response.Content.Headers.ContentLength;
-                if ((response.Content.Headers.ContentRange?.To.HasValue ?? false) && (response.Content.Headers.ContentRange?.From.HasValue ?? false))
-                    length = response.Content.Headers.ContentRange.To - response.Content.Headers.ContentRange.From;
-                long process = 0;
-                byte[] buffer = new byte[bufferSize];
-
-
-                using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                if (cancellation is null)
                 {
-                    while ((bytesRead =
-                        await stream.ReadAsync(buffer, 0, bufferSize, cancellation.Token)
-                                    .ConfigureAwait(false)) > 0)
-                    {
-                        await output.WriteAsync(buffer, 0, bytesRead, cancellation.Token)
-                                    .ConfigureAwait(false);
+                    cancellation = new CancellationTokenSource();
+                    dispose = true;
+                }
+                using (HttpRequestMessage requese = new HttpRequestMessage
+                {
+                    RequestUri = uri,
+                    Method = HttpMethod.Get
+                })
+                {
+                    if (from.HasValue || to.HasValue)
+                        requese.Headers.Range = new RangeHeaderValue(from, to);
 
-                        process += bytesRead;
-                        callback?.Invoke(process, length);
+                    var response = await SendAsync(requese, cancellation.Token).ConfigureAwait(false);
+                    int bytesRead;
+                    long? length = response.Content.Headers.ContentLength;
+                    if ((response.Content.Headers.ContentRange?.To.HasValue ?? false) && (response.Content.Headers.ContentRange?.From.HasValue ?? false))
+                        length = response.Content.Headers.ContentRange.To - response.Content.Headers.ContentRange.From;
+                    long process = 0;
+                    byte[] buffer = new byte[bufferSize];
+
+
+                    using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    {
+                        while ((bytesRead =
+                            await stream.ReadAsync(buffer, 0, bufferSize, cancellation.Token)
+                                        .ConfigureAwait(false)) > 0)
+                        {
+                            await output.WriteAsync(buffer, 0, bytesRead, cancellation.Token)
+                                        .ConfigureAwait(false);
+
+                            process += bytesRead;
+                            callback?.Invoke(process, length);
+                        }
                     }
                 }
+            }
+            finally
+            {
+                if (dispose)
+                    cancellation?.Dispose();
             }
         }
 
 
         public async Task<T> GetObjectFromJson<T>(Uri url, CancellationTokenSource cancellation = default)
         {
-#if NET45
-            using (var ms = new MemoryStream())
+
+            bool dispose = false;
+            try
             {
-                await Download(url, ms, cancellation: cancellation).ConfigureAwait(false);
-                await ms.FlushAsync().ConfigureAwait(false);
-                var str = Encoding.UTF8.GetString(ms.ToArray());
-                return JsonConvert.DeserializeObject<T>(str);
-            }
+                if (cancellation is null)
+                {
+                    cancellation = new CancellationTokenSource();
+                    dispose = true;
+                }
+#if NET45
+                using (var ms = new MemoryStream())
+                {
+                    await Download(url, ms, cancellation: cancellation).ConfigureAwait(false);
+                    await ms.FlushAsync().ConfigureAwait(false);
+                    var str = Encoding.UTF8.GetString(ms.ToArray());
+                    return JsonConvert.DeserializeObject<T>(str);
+                }
 #else
-            using var response = await GetAsync(url, cancellation.Token).ConfigureAwait(false);
-            await using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            return await JsonSerializer.DeserializeAsync<T>(stream, cancellationToken: cancellation.Token);
+                using var response = await GetAsync(url, cancellation.Token).ConfigureAwait(false);
+                await using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await JsonSerializer.DeserializeAsync<T>(stream, cancellationToken: cancellation.Token);
 #endif
+            }
+            finally
+            {
+                if (dispose)
+                    cancellation?.Dispose();
+            }
         }
 
         /// <summary>

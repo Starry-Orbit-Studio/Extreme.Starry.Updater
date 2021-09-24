@@ -22,7 +22,7 @@ namespace Extreme.Starry.Updater.Client
             ThrowExceptWhenIfNull(server, nameof(server));
 
             List<VersionInfo> result = new List<VersionInfo>();
-            bool isNeedUpdate = false;
+            bool isNeedUpdate = string.IsNullOrWhiteSpace(currentVersion);
             foreach (var version in server.Versions)
             {
                 if (isNeedUpdate)
@@ -56,9 +56,12 @@ namespace Extreme.Starry.Updater.Client
                             finalList[file.Path] = file;
                         }
                     }
-                    else if (finalList.TryGetValue(file.WillBeMovedFrom, out _))
+                    else if (!string.IsNullOrWhiteSpace(file.WillBeMovedFrom) && finalList.TryGetValue(file.WillBeMovedFrom, out _))
                     {
                         finalList[file.WillBeMovedFrom] = file;
+                    }else
+                    {
+                        finalList[file.Path] = file;
                     }
                 }
             }
@@ -82,7 +85,7 @@ namespace Extreme.Starry.Updater.Client
 
         private async Task<T> LoadBaseOn<T>(T baseOn) where T : BaseOnConfig
         {
-            return baseOn is BaseOnConfig @base && !string.IsNullOrEmpty(@base?.ToString())
+            return baseOn is BaseOnConfig @base && !string.IsNullOrEmpty(@base.BaseOnUrl?.ToString())
                 ? ApplyPropertiesFromBase(await _client.GetObjectFromJson<T>(@base.BaseOnUrl), baseOn)
                 : baseOn;
         }
