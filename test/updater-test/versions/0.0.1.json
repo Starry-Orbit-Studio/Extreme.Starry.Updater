@@ -1,0 +1,12 @@
+{
+  "gameId": "ES",
+  "Version": "0.0.1",
+  "files": [
+    {
+      "hash": "7F83B1657FF1FC53B92DC18148A1D65DFC2D4B1FA3D677284ADDD200126D9069",
+      "path": "/file1",
+      "size": 12,
+      "url": "http://localhost:3000/versions/0.0.1/file1"
+    }
+  ]
+}

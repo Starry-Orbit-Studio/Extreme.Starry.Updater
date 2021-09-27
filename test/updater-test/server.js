@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = require('./file')
 
 const port = 3000
 const host = '::'
@@ -11,25 +11,29 @@ require('http').createServer().on('error', (err) => console.error(err)).on('list
     path += host
   path += `:${port}`
   console.log(`server listening on ${path}`)
-}).on('request', (req, res) => {
+}).on('request', async (req, res) => {
   let path = req.url.split(/\?|#/)[0]
-  if (path === '/favicon.ico') {
+
+  if (path === '/')
+    path += 'index'
+  path = `${__dirname}${path}`
+
+  try {
+    if (await fs.exists(path)) {
+      if(path.includes('favicon'))
+        res.setHeader('Content-Type', 'image/png')
+      else
+        res.setHeader('Content-Type', 'text/plain')
+    } else {
+      path += '.json'
+      res.setHeader('Content-Type', 'application/json')
+    }
+    const data = await fs.readFile(path)
+    console.log(`load file from ${path}`)
+    res.end(data)
+  } catch (err) {
+    console.warn(`Cannot load file from ${path}`)
     res.statusCode = 404
     res.end()
-  } else {
-    if (path === '/')
-      path += 'index'
-    path = `${__dirname}${path}.json`
-    fs.readFile(path, (err, data) => {
-      if (err) {
-        console.warn(`Cannot load file from ${path}`)
-        res.statusCode = 404
-        res.end(err.message)
-      } else {
-        console.log(`load file from ${path}`)
-        res.setHeader('Content-Type', 'application/json')
-        res.end(data)
-      }
-    })
   }
 }).listen(port, host)

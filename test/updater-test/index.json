@@ -1,11 +1,11 @@
 {
   "serverName": "Extreme Starry 测试用更新服务器",
   "serverVersion": "0.0.1 test",
-  "current": "0.0.1",
+  "current": "0.0.3",
   "gameId": "ES",
   "versions": [
-    {
-      "$baseOn": "http://localhost:3000/version1"
-    }
+    { "$baseOn": "http://localhost:3000/versions/0.0.1" },
+    { "$baseOn": "http://localhost:3000/versions/0.0.2" },
+    { "$baseOn": "http://localhost:3000/versions/0.0.3" }
   ]
 }
