@@ -1,15 +1,11 @@
 const fs = require('fs')
 
 const exists = (path) => new Promise((resolve, reject) => {
-
-  console.log(path)
   fs.stat(path, (err, stats) => {
     if (err)
       resolve(false)
-    else {
-      console.log(stats)
+    else 
       resolve(stats.isFile())
-    }
   })
 })
 const readFile = (path) => new Promise((resolve, reject) => {
