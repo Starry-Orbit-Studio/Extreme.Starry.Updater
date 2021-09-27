@@ -66,6 +66,13 @@ namespace Extreme.Starry.Updater.Client
             return finalList.Values;
         }
 
+        
+        public async Task DownloadFiles(IEnumerable<DownloadFileInfo> files)
+        {
+            // UNDOWN: DownloadFiles
+        }
+
+
         private void ThrowExceptWhenIfNull(object o, string name)
         {
             if (o is null)
