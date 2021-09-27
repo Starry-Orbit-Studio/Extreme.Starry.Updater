@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -108,11 +109,17 @@ namespace Extreme.Starry.Updater.Client
                     await Download(url, ms, cancellation: cancellation).ConfigureAwait(false);
                     await ms.FlushAsync().ConfigureAwait(false);
                     var str = Encoding.UTF8.GetString(ms.ToArray());
+                    Debug.WriteLine(str);
                     return JsonConvert.DeserializeObject<T>(str);
                 }
 #else
                 using var response = await GetAsync(url, cancellation.Token).ConfigureAwait(false);
                 await using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#if DEBUG
+                using StreamReader sr = new(stream);
+                Debug.WriteLine(sr.ReadToEnd());
+                stream.Seek(0, SeekOrigin.Begin);
+#endif
                 return await JsonSerializer.DeserializeAsync<T>(stream, cancellationToken: cancellation.Token);
 #endif
             }

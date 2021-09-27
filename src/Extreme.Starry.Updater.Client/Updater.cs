@@ -45,21 +45,18 @@ namespace Extreme.Starry.Updater.Client
 
                 foreach (var file in version.FileList)
                 {
-                    if (finalList.TryGetValue(file.Path, out _))
+                    // What the FUCK?
+                    // How do we delete this file when removed from the list?
+                    //if (finalList.ContainsKey(file.Path) && file.WillBeRemoved)
+                    //{
+                    //    finalList.Remove(file.Path);
+                    //}
+                    if (!string.IsNullOrWhiteSpace(file.WillBeMovedFrom) && finalList.TryGetValue(file.WillBeMovedFrom, out _))
                     {
-                        if (file.WillBeRemoved)
-                        {
-                            finalList.Remove(file.Path);
-                        }
-                        else
-                        {
-                            finalList[file.Path] = file;
-                        }
+                        finalList.Remove(file.WillBeMovedFrom);
+                        finalList.Add(file.Path, file);
                     }
-                    else if (!string.IsNullOrWhiteSpace(file.WillBeMovedFrom) && finalList.TryGetValue(file.WillBeMovedFrom, out _))
-                    {
-                        finalList[file.WillBeMovedFrom] = file;
-                    }else
+                    else
                     {
                         finalList[file.Path] = file;
                     }
