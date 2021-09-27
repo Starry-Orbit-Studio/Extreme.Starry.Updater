@@ -147,7 +147,7 @@ namespace Updater
         //                    {
         //                        DTAVersionState = VersionState.UPTODATE;
         //                        OnFileIdentifiersUpdated();
-        //                        // TODO: Check Modules Update Info
+        //                        // Check Modules Update Info
         //                    }
         //                }
         //            }
@@ -336,7 +336,7 @@ namespace Updater
         //        public static volatile bool HasVersionBeenChecked;
         //        public static event NoParamEventHandler OnLocalFileVersionsChecked;
         //        public static event EventHandler Restart;
-        //        // TODO
+        //        // 
 
         //        public static CustomComponent[] CustomComponents { get; private set; }
         //        public static ServerDetailsInfo ServerDetailsInfo { get; private set; }
